@@ -43,3 +43,8 @@
 
 # COMMAND ----------
 
+# MAGIC %sql
+# MAGIC select * from fk_1374.silver.order_items;
+
+# COMMAND ----------
+
