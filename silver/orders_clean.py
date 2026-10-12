@@ -95,6 +95,7 @@ def quarantine_and_load_orders(spark):
     )
 
     # Write (merge/upsert logic should be used in production)
+
     order_items.write.mode("overwrite").option("overwriteSchema", "true").saveAsTable("fk_1374.silver.order_items")
     quarantine_orders.write.mode("append").saveAsTable("fk_1374.silver.quarantine_orders")
     quarantine_items.write.mode("append").saveAsTable("fk_1374.silver.quarantine_orders")

@@ -4,22 +4,20 @@ from pyspark.sql.functions import col, to_date
 # 1. CONFIGURATION
 # ============================================================
 
-dbutils.widgets.text("CATALOG", "fk_1393")
+dbutils.widgets.text("CATALOG", "fk_1374")
 CATALOG = dbutils.widgets.get("CATALOG")
-
 
 # ============================================================
 # 2. TABLE LOCATIONS
 # ============================================================
 
-ORDER_ITEMS_SILVER = f"{CATALOG}.silver.order_items_silver"
-ORDERS_SILVER = f"{CATALOG}.silver.orders_silver"
+ORDER_ITEMS_SILVER = f"{CATALOG}.silver.order_items"
+# ORDERS_SILVER = f"{CATALOG}.silver.orders_silver"
 
 DIM_CUSTOMER = f"{CATALOG}.gold.dim_customer"
 DIM_DATE = f"{CATALOG}.gold.dim_date"
 
 FACT_TABLE = f"{CATALOG}.gold.fact_order_items"
-
 
 # ============================================================
 # 3. CREATE GOLD SCHEMA IF NOT EXISTS
@@ -35,7 +33,7 @@ spark.sql(f"CREATE SCHEMA IF NOT EXISTS {CATALOG}.gold")
 items_df = spark.read.table(ORDER_ITEMS_SILVER)
 
 orders_df = (
-    spark.read.table(ORDERS_SILVER)
+    spark.read.table(ORDER_ITEMS_SILVER)
     .select(
         col("order_id"),
         col("updated_at"),
@@ -77,7 +75,6 @@ df = items_df.join(
     on="order_id",
     how="left"
 )
-
 
 # ============================================================
 # 7. LOOK UP CUSTOMER SURROGATE KEY
@@ -129,7 +126,7 @@ df = df.select(
 
     # Timestamps
     col("order_ts"),
-    col("updated_at"),
+    # col("updated_at"),  # dropped because this column does not exist
 
     # Line-item measures
     col("qty"),
